@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Search Engine</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Academic Search Engine</h2>
+        <input type="text" id="search-box" placeholder="Enter topic (e.g., Machine Learning in Healthcare)">
+        <button id="search-btn">Search</button>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#search-btn").click(function () {
+                const query = $("#search-box").val();
+                if (query) {
+                    $("#results").html("<p>Searching...</p>");
+                    $.post("/search", { query: query }, function (data) {
+                        const resultLines = data.result.split("\n\n"); // Split each source block
+                        let formattedResults = "";
+    
+                        resultLines.forEach((block, index) => {
+                            if (block.trim()) {
+                                // Parse each part of the response
+                                const titleMatch = block.match(/\*\*Title\*\*: (.+)/);
+                                const authorsMatch = block.match(/\*\*Author\(s\)\*\*: (.+)/);
+                                const descriptionMatch = block.match(/\*\*Description\*\*: (.+)/);
+                                const citationMatch = block.match(/\*\*Citation\*\*: (.+)/);
+                                const linkMatch = block.match(/\*\*Reference Link\*\*: \[(.+)\]\((.+)\)/);
+    
+                                // Construct the formatted card
+                                let card = '<div class="card">';
+                                if (titleMatch) card += `<h3>${titleMatch[1]}</h3>`;
+                                if (authorsMatch) card += `<p><strong>Author(s):</strong> ${authorsMatch[1]}</p>`;
+                                if (descriptionMatch) card += `<p><strong>Description:</strong> ${descriptionMatch[1]}</p>`;
+                                if (citationMatch) card += `<p><strong>Citation:</strong> ${citationMatch[1]}</p>`;
+                                if (linkMatch) {
+                                    card += `<p><strong>Reference Link:</strong> <a href="${linkMatch[2]}" target="_blank" rel="noopener noreferrer">${linkMatch[1]}</a></p>`;
+                                }
+                                card += "</div>";
+    
+                                formattedResults += card;
+                            }
+                        });
+    
+                        $("#results").html(formattedResults || "<p>No results found.</p>");
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
