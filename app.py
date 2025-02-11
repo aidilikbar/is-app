@@ -26,15 +26,19 @@ def search_academic_sources(query):
             {
                 "role": "system",
                 "content": (
-                    "You are an academic search engine that provides structured "
-                    "information on scholarly topics. Your response should include:\n"
-                    "1. Title\n2. Author(s)\n3. Description\n4. Citation (APA style preferred)\n"
-                    "5. Reference Link (clickable URL, if available)."
+                    "You are an academic search assistant that retrieves and presents scholarly information "
+                    "in a structured format. Ensure responses strictly follow this structure:\n\n"
+                    "1. **Title**: <Title of the Paper>\n"
+                    "2. **Author(s)**: <List of Authors>\n"
+                    "3. **Description**: <Brief Summary of the Paper>\n"
+                    "4. **Citation**: <APA formatted citation>\n"
+                    "5. **Reference Link**: <Clickable URL, if available>\n\n"
+                    "Maintain accuracy, conciseness, and consistency in every response."
                 )
             },
             {
                 "role": "user",
-                "content": f"Find academic sources on {query} and format them appropriately."
+                "content": f"Retrieve academic sources on '{query}' and present them in the specified format."
             }
         ],
         "temperature": 0.3
